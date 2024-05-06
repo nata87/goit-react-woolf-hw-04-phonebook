@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AddContactForm from './addContactForm/addContactForm';
 import ContactList from './contactList/contactList';
 import Filter from './filter/filter';
@@ -9,14 +9,14 @@ const App = () => {
     filter: '',
   });
 
-  const setContacts = () => {
-    const { filter } = state;
-
-    setState({
-      filter,
-      contacts: JSON.parse(localStorage.getItem('contacts')),
+  const setContacts = useCallback(() => {
+    setState(prev => {
+      return {
+        ...prev,
+        contacts: JSON.parse(localStorage.getItem('contacts')),
+      };
     });
-  };
+  }, []);
 
   const setContactToStorage = newContact => {
     const { contacts } = state;
@@ -66,7 +66,7 @@ const App = () => {
 
   useEffect(() => {
     setContacts();
-  }, []);
+  }, [setContacts]);
 
   const { contacts, filter } = state;
   return (
