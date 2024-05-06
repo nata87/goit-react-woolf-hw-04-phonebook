@@ -1,26 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AddContactForm from './addContactForm/addContactForm';
 import ContactList from './contactList/contactList';
 import Filter from './filter/filter';
-import { Component } from 'react';
 
-class App extends Component {
-  state = {
+const App = () => {
+  const [state, setState] = useState({
     contacts: [],
     filter: '',
-  };
+  });
 
-  setContacts = () => {
-    const { filter } = this.state;
+  const setContacts = () => {
+    const { filter } = state;
 
-    this.setState({
+    setState({
       filter,
       contacts: JSON.parse(localStorage.getItem('contacts')),
     });
   };
 
-  setContactToStorage = newContact => {
-    const { contacts } = this.state;
+  const setContactToStorage = newContact => {
+    const { contacts } = state;
     if (
       contacts.some(contact => {
         return (
@@ -35,21 +34,21 @@ class App extends Component {
         'contacts',
         JSON.stringify([...contacts, newContact])
       );
-      this.setContacts();
+      setContacts();
     }
   };
 
-  handleChange = e => {
-    const { contacts } = this.state;
+  const handleChange = e => {
+    const { contacts } = state;
 
-    this.setState({
+    setState({
       [e.target.name]: e.target.value,
       contacts,
     });
   };
 
-  getFilteredContacts = () => {
-    const { contacts, filter } = this.state;
+  const getFilteredContacts = () => {
+    const { contacts, filter } = state;
     return contacts.length
       ? contacts.filter(contact => {
           return contact.name.toLowerCase().includes(filter.toLowerCase());
@@ -57,40 +56,31 @@ class App extends Component {
       : contacts;
   };
 
-  deleteContact = deletedId => {
-    const { contacts } = this.state;
+  const deleteContact = deletedId => {
+    const { contacts } = state;
 
     const filteredContacts = contacts.filter(({ id }) => deletedId !== id);
     localStorage.setItem('contacts', JSON.stringify(filteredContacts));
-    this.setContacts();
+    setContacts();
   };
 
-  componentDidMount() {
-    this.setContacts();
-  }
+  useEffect(() => {
+    setContacts();
+  }, []);
 
-  render() {
-    const {
-      setContactToStorage,
-      handleChange,
-      getFilteredContacts,
-      deleteContact,
-      state,
-    } = this;
-    const { contacts, filter } = state;
-    return (
-      <div>
-        <h1>Phonebook</h1>
-        <AddContactForm setContacts={setContactToStorage} contacts={contacts} />
-        <h2>Contacts</h2>
-        <Filter filter={filter} handleChange={handleChange} />
-        <ContactList
-          contacts={getFilteredContacts()}
-          deleteContact={deleteContact}
-        />
-      </div>
-    );
-  }
-}
+  const { contacts, filter } = state;
+  return (
+    <div>
+      <h1>Phonebook</h1>
+      <AddContactForm setContacts={setContactToStorage} contacts={contacts} />
+      <h2>Contacts</h2>
+      <Filter filter={filter} handleChange={handleChange} />
+      <ContactList
+        contacts={getFilteredContacts()}
+        deleteContact={deleteContact}
+      />
+    </div>
+  );
+};
 
 export default App;
