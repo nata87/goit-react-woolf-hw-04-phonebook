@@ -66,7 +66,7 @@ const App = () => {
 
   useEffect(() => {
     setContacts();
-  }, []);
+  }, [setContacts]);
 
   const { contacts, filter } = state;
   return (
