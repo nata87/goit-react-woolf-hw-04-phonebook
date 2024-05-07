@@ -13,7 +13,7 @@ const App = () => {
     setState(prev => {
       return {
         ...prev,
-        contacts: JSON.parse(localStorage.getItem('contacts')),
+        contacts: JSON.parse(localStorage.getItem('contacts')) || [],
       };
     });
   }, []);
